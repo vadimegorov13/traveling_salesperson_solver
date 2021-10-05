@@ -1,14 +1,22 @@
-from TSP import TSP
-
+from test_samples import GRAPHS
+from test import test
 
 def main():
-    travel_map = TSP()
+    # tsp = TSP()
+    # tsp.set_n_cities(16)
+    # tsp.set_cost_graph(GRAPHS[3]["cost_graph"])
 
-    travel_map.set_n_cities(7)
-    travel_map.set_home(2)
+    # print(tsp.home)
+    # print(tsp.cost_graph)
 
-    print(travel_map.home)
-    print(travel_map.cost_graph)
+    # optimal_solution = RRHC(tsp)
+
+    # print("optimal solution path: ", optimal_solution["path"])
+    # print("optimal solution cost: ", optimal_solution["cost"])
+
+    print("---Test Started---")
+    test(GRAPHS)
+    print("----Test Ended----")
 
     return
 
