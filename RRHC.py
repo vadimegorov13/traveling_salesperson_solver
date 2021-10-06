@@ -3,89 +3,52 @@ from numpy import random
 from copy import deepcopy
 from sys import maxsize
 
-def path_cost(cost_graph, path):
-    cost = 0
-
-    for i in range(len(path) - 1):
-        cost += cost_graph[path[i]][path[i+1]]
-
-    return cost
-
-
-def random_restart(tsp):
-    cities = list(range(tsp.n_cities))
-    path = list()
-    cities.remove(tsp.home)
-
-    for _ in range(tsp.n_cities - 1):
-        rand_city = cities[random.randint(0, len(cities))]
-        path.append(rand_city)
-        cities.remove(rand_city)
-
-    path.insert(0, tsp.home)
-    path.append(tsp.home)
-
-    return {"path": path, "cost": path_cost(tsp.cost_graph, path)}
-
-
-def get_neighbors(cost_graph, path, opened_nodes):
-    n = len(path) - 1
-    neighbors = list()
-
-    for i in range(1, n):
-        for j in range(i + 1, n):
-            neighbor = deepcopy(path)
-            neighbor[i] = path[j]
-            neighbor[j] = path[i]
-            neighbors.append(
-                {"path": neighbor, "cost": path_cost(cost_graph, neighbor)})
-            opened_nodes += 1
-
-    return neighbors, opened_nodes
+from helper_functions import get_neighbors, random_restart
 
 
 def optimal_neighbor(cost_graph, path, opened_nodes):
+    # Get all neighbors
     neighbors, opened_nodes = get_neighbors(cost_graph, path, opened_nodes)
     # print("Neighbors: ", neighbors)
     optimal_neighbor = neighbors[0]
     min_cost = neighbors[0]["cost"]
 
+    # Iterate through every neighbor and conpare their cost
     for neighbor in neighbors:
         if min_cost > neighbor["cost"]:
             min_cost = neighbor["cost"]
             optimal_neighbor = neighbor
 
+    # Return neighbor with the lowes cost
     return optimal_neighbor, opened_nodes
 
-
+# Hill climbing function
 def hill_climbing(tsp, opened_nodes):
+    # Get random path
     curr_node = random_restart(tsp)
 
-    # print("Starting path: ", curr_node["path"])
-    # print("Starting cost: ", curr_node["cost"])
-
     while True:
+        # Get neighbor with the lowes cost
         neighbor, opened_nodes = optimal_neighbor(tsp.cost_graph, curr_node["path"], opened_nodes)
 
-        # print("Optimal neighbor path: ", neighbor["path"])
-        # print("Optimal neighbor cost: ", neighbor["cost"])
-
+        # Check if the cost of neighbor is greater or equal to the cost of current node
         if neighbor["cost"] >= curr_node["cost"]:
             return curr_node, opened_nodes
 
         curr_node = neighbor
 
 
+# Random restart hill climbing function
 def RRHC(tsp):
+    # Init open node counter and optimal solution
     opened_nodes = 0
     optimal_solution = {"path": [], "cost": maxsize}
 
+    # Iterate 100 times and get the most optimal solution throughout all hill climbing solutions
     for _ in range(100):
         optimal_node, opened_nodes = hill_climbing(tsp, opened_nodes)
 
-        # print("Optimal node path: ", optimal_node["path"])
-        # print("Optimal node cost: ", optimal_node["cost"])
-
+        # Compare optimal solution with the node from hill climbing
         if optimal_solution["cost"] >= optimal_node["cost"]:
             optimal_solution = optimal_node
             
