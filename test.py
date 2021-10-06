@@ -33,7 +33,7 @@ def test(graphs):
         graph_n_str = str(graph_n)
         for algorithm in algorithms:
             for _ in range(5):
-                # Copy start and goal
+                # Copy n_cities, home, and cost_graph
                 tsp.set_n_cities(graph["n_cities"])
                 tsp.set_home(graph["home"])
                 tsp.set_cost_graph(graph["cost_graph"])
@@ -43,6 +43,7 @@ def test(graphs):
                 # Execute algorithm; get solution node and number of opened nodes
                 solution, opened_nodes = algorithm(tsp)
                 stop_t = perf_counter()
+                
                 # Print cool table 
                 list_to_print.append({"on": opened_nodes, "gn": graph_n_str,"a": algorithm.__name__, "t": stop_t - start_t, "p": solution["path"], "c": solution["cost"]})
                 cool_table_print(list_to_print)
