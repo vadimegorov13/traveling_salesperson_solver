@@ -2,12 +2,14 @@ from numpy import random
 from random import randrange
 from copy import deepcopy
 from sys import maxsize
-from math import exp
+from math import exp, floor
 
 from numpy.random.mtrand import rand
+from TSP import TSP
 
 MAX_STEPS = 100
-START_TEMP = 1000
+START_TEMP = 100
+
 
 def random_restart(tsp):
     cities = list(range(tsp.n_cities))
@@ -51,15 +53,15 @@ def get_neighbors(cost_graph, path, opened_nodes):
 
 def SA(tsp):
     opened_nodes = 0
-    curr_node = random_restart(tsp)
+    curr_best = random_restart(tsp)
+    curr_best_cost = curr_best["cost"]
+    curr_node = curr_best
     optimal_solution = {"path": [], "cost": maxsize}
 
     for i in range(MAX_STEPS):
-        neighbors, opened_nodes = get_neighbors(tsp.cost_graph, curr_node["path"], opened_nodes)
-        curr_best = neighbors[0]
-        curr_best_cost = neighbors[0]["cost"]
-
-        curr_node, curr_node_cost = curr_best, curr_best_cost
+        neighbors, opened_nodes = get_neighbors(
+            tsp.cost_graph, curr_node["path"], opened_nodes
+        )
 
         rand_neighbor = randrange(len(neighbors))
         potential_neighbor = neighbors[rand_neighbor]
@@ -68,28 +70,14 @@ def SA(tsp):
         if potential_neighbor_cost < curr_best_cost:
             curr_best, curr_best_cost = potential_neighbor, potential_neighbor_cost
 
-        change_energy = abs(potential_neighbor_cost - curr_node_cost)
-        curr_temp = START_TEMP / float(i + 1)
+        change_energy = potential_neighbor_cost - curr_best_cost
+        curr_temp = START_TEMP / (i + 1)
         acc_rate = exp(-change_energy / curr_temp)
 
-        # print()
-        # print("step:         ", i)
-        # print("change_energy:", change_energy)
-        # print("curr_temp:    ", curr_temp)
-        # print("acc_rate:     ", acc_rate)
-
         if change_energy < 0 or rand() < acc_rate:
-            
-            # print()
-            # print("change")
-            # print("step:         ", i)
-            # print("change_energy:", change_energy)
-            # print("curr_temp:    ", curr_temp)
-            # print("acc_rate:     ", acc_rate)
+            curr_node = potential_neighbor
 
-            curr_node, curr_node_cost = potential_neighbor, potential_neighbor_cost
-
-    optimal_solution["path"] = curr_best["path"]
+    optimal_solution = curr_best
     optimal_solution["cost"] = curr_best_cost
 
     return optimal_solution, opened_nodes
