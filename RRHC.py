@@ -1,6 +1,4 @@
 # Random restart Hill-Climbing
-from numpy import random
-from copy import deepcopy
 from sys import maxsize
 
 from helper_functions import get_neighbors, random_restart
