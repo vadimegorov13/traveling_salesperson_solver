@@ -3,6 +3,7 @@ from time import perf_counter
 
 from TSP import TSP
 from RRHC import RRHC
+from SA import SA
 
 
 def cool_table_print(list_to_print):
@@ -22,7 +23,7 @@ def cool_table_print(list_to_print):
 def test(graphs):
     # Init tsp
     tsp = TSP()
-    algorithms = [RRHC]
+    algorithms = [RRHC, SA]
     list_to_print = []
     graph_n = 0 # this is just a counter for cool_table_print
 
